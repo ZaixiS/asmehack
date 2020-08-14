@@ -3,3 +3,5 @@
 *.jpg
 *.bmp
 *.zip
+./data/*
+./Hackathon_3dBuild/*
