@@ -2,13 +2,13 @@
 Hackathon_3dBuild/
 problem2/
 
-# *.bmp
-# *.jpg
-# *.jpeg
-# *.png
+*.bmp
+*.jpg
+*.jpeg
+*.png
 
-# *.csv
-# *.txt
-# *.ipynb
-# *.pdf
-# *.zip
+*.csv
+*.txt
+*.ipynb
+*.pdf
+*.zip
