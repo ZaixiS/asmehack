@@ -1,18 +1,4 @@
 
-# -  **Finetuning the convnet**: Instead of random initializaion, we
-#    initialize the network with a pretrained network, like the one that is
-#    trained on imagenet 1000 dataset. Rest of the training looks as
-#    usual.
-# -  **ConvNet as fixed feature extractor**: Here, we will freeze the weights
-#    for all of the network except that of the final fully connected
-#    layer. This last fully connected layer is replaced with a new one
-#    with random weights and only this layer is trained.
-# 
-# 
-# 
-
-# %%
-# License: BSD
 # Author: Sasank Chilamkurthy
 
 from __future__ import print_function, division
@@ -27,9 +13,15 @@ from torchvision import datasets, models, transforms
 import matplotlib.pyplot as plt
 import time
 import os
+from skimage import io, transform
+
 import copy
-from matplotlib.pyplot import imshow
+import os.path
+import glob
+from torch.utils.data import Dataset, DataLoader
+import pandas as pd
 plt.ion()   # interactive mode
+from matplotlib.pyplot import imshow
 
 # %% [markdown]
 # Load Data
@@ -55,39 +47,73 @@ plt.ion()   # interactive mode
 # 
 
 # %%
+# Writing a custermized dataset for my data
+class CommendDataset(Dataset):
+    """Face Landmarks dataset."""
+
+    def __init__(self, root_dir , label_dir  , phase, transform=None):
+        """
+        Args:
+            csv_file (string): Path to the csv file with annotations.
+            root_dir (string): Directory with all the images.
+            transform (callable, optional): Optional transform to be applied
+                on a sample.
+        """
+        self.root_dir = root_dir
+        self.transform = transform
+        self.num_image = glob.glob(os.path.join(root_dir,'*.png'))
+        self.df_label = pd.read_csv(os.path.join(label_dir,'MPM_Layer0013.csv'))
+        self.phase = phase
+
+    def __len__(self):
+        return len(self.num_image)
+
+    def __getitem__(self, idx):
+        lab = self.df_label.iloc[idx]['label']
+        if self.phase == 'val':
+            idx = idx+1999
+        if torch.is_tensor(idx):
+            idx = idx.tolist()
+
+        img_name = os.path.join(self.root_dir,
+                                str(idx+1)+'.png')
+        image = io.imread(img_name).transpose((2, 0, 1))
+
+        if self.transform:
+            image = self.transform(image)
+        
+        return image,lab
+
+
+# %%
 # Data augmentation and normalization for training
 # Just normalization for validation
-data_transforms = {
-    'train': transforms.Compose([
-        transforms.RandomResizedCrop(224),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ]),
-    'val': transforms.Compose([
-        transforms.Resize(256),
-        transforms.CenterCrop(224),
-        transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
-    ]),
-}
+# data_transforms = {
+#     'train': transforms.Compose([
+#         transforms.RandomResizedCrop(224),
+#         transforms.RandomHorizontalFlip(),
+#         transforms.ToTensor(),
+#         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+#     ]),
+#     'val': transforms.Compose([
+#         transforms.Resize(256),
+#         transforms.CenterCrop(224),
+#         transforms.ToTensor(),
+#         transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225])
+#     ]),
+# }
 
-data_dir = 'data/hymenoptera_data'
-image_datasets = {x: datasets.ImageFolder(os.path.join(data_dir, x),
-                                          data_transforms[x])
-                  for x in ['train', 'val']}
+data_dir = './CMD_Layer0013/'
+label_dir = './labels/'
+image_datasets = {x: CommendDataset(root_dir = os.path.join(data_dir, x),label_dir = os.path.join(label_dir,x),phase = x) for x in ['train', 'val']}
+# dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4,
+#                                              shuffle=True, num_workers=4)
+#               for x in ['train', 'val']}
 dataloaders = {x: torch.utils.data.DataLoader(image_datasets[x], batch_size=4,
                                              shuffle=True)
               for x in ['train', 'val']}
 dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
-class_names = image_datasets['train'].classes
-
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-
-
-# %%
-for i,j in dataloaders['train']:
-    print(i.shape)
 
 # %% [markdown]
 # Visualize a few images
@@ -98,26 +124,22 @@ for i,j in dataloaders['train']:
 # 
 
 # %%
-def imshow(inp, title=None):
-    """Imshow for Tensor."""
-    inp = inp.numpy().transpose((1, 2, 0))
-    mean = np.array([0.485, 0.456, 0.406])
-    std = np.array([0.229, 0.224, 0.225])
-    inp = std * inp + mean
-    inp = np.clip(inp, 0, 1)
-    plt.imshow(inp)
-    if title is not None:
-        plt.title(title)
-    plt.pause(0.001)  # pause a bit so that plots are updated
+# def imshow(inp, title=None):
+#     """Imshow for Tensor."""
+#     inp = inp.numpy()
+#     plt.imshow(inp)
+#     if title is not None:
+#         plt.title(title)
+#     plt.pause(0.001)  # pause a bit so that plots are updated
 
 
-# Get a batch of training data
-inputs, classes = next(iter(dataloaders['train']))
+# # Get a batch of training data
+# inputs, classes = next(iter(dataloaders['train']))
 
-# Make a grid from batch
-out = torchvision.utils.make_grid(inputs)
+# # Make a grid from batch
+# out = torchvision.utils.make_grid(inputs)
 
-imshow(out, title=[class_names[x] for x in classes])
+# imshow(out, title=[class_names[x] for x in classes])
 
 # %% [markdown]
 # Training the model
@@ -139,7 +161,7 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
     since = time.time()
 
     best_model_wts = copy.deepcopy(model.state_dict())
-    best_acc = 0.0
+    best_acc = 9999999
 
     for epoch in range(num_epochs):
         print('Epoch {}/{}'.format(epoch, num_epochs - 1))
@@ -152,13 +174,13 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
             else:
                 model.eval()   # Set model to evaluate mode
 
-            running_loss = 0.0
-            running_corrects = 0
-
+            epoch_loss = 0
+            epoch_acc = 0
             # Iterate over data.
             for inputs, labels in dataloaders[phase]:
-                inputs = inputs.to(device)
-                labels = labels.to(device)
+                
+                inputs = inputs.to(device, dtype=torch.float32)
+                labels = labels.to(device, dtype=torch.float32)
 
                 # zero the parameter gradients
                 optimizer.zero_grad()
@@ -174,21 +196,23 @@ def train_model(model, criterion, optimizer, scheduler, num_epochs=25):
                     if phase == 'train':
                         loss.backward()
                         optimizer.step()
-
+                    
+                epoch_loss += loss * inputs.size(0)
                 # statistics
-                running_loss += loss.item() * inputs.size(0)
-                running_corrects += torch.sum(preds == labels.data)
+                # running_loss += loss.item() * inputs.size(0)
+                # running_corrects += torch.sum(preds == labels.data)
             if phase == 'train':
                 scheduler.step()
 
-            epoch_loss = running_loss / dataset_sizes[phase]
-            epoch_acc = running_corrects.double() / dataset_sizes[phase]
+            epoch_loss = epoch_loss/dataset_sizes[phase]
 
-            print('{} Loss: {:.4f} Acc: {:.4f}'.format(
+            epoch_acc = epoch_loss.sqrt()
+
+            print('{} MSE: {:.4f} RMSE: {:.4f}'.format(
                 phase, epoch_loss, epoch_acc))
 
             # deep copy the model
-            if phase == 'val' and epoch_acc > best_acc:
+            if phase == 'val' and epoch_acc < best_acc:
                 best_acc = epoch_acc
                 best_model_wts = copy.deepcopy(model.state_dict())
 
@@ -221,8 +245,8 @@ def visualize_model(model, num_images=6):
 
     with torch.no_grad():
         for i, (inputs, labels) in enumerate(dataloaders['val']):
-            inputs = inputs.to(device)
-            labels = labels.to(device)
+            inputs = inputs.to(device, dtype=torch.float32)
+            labels = labels.to(device, dtype=torch.float32)
 
             outputs = model(inputs)
             _, preds = torch.max(outputs, 1)
@@ -231,7 +255,7 @@ def visualize_model(model, num_images=6):
                 images_so_far += 1
                 ax = plt.subplot(num_images//2, 2, images_so_far)
                 ax.axis('off')
-                ax.set_title('predicted: {}'.format(class_names[preds[j]]))
+                ax.set_title('predicted: {}'.format('name'))
                 imshow(inputs.cpu().data[j])
 
                 if images_so_far == num_images:
@@ -253,11 +277,11 @@ model_ft = models.resnet18(pretrained=True)
 num_ftrs = model_ft.fc.in_features
 # Here the size of each output sample is set to 2.
 # Alternatively, it can be generalized to nn.Linear(num_ftrs, len(class_names)).
-model_ft.fc = nn.Linear(num_ftrs, 2)
+model_ft.fc = nn.Linear(num_ftrs,1)
 
 model_ft = model_ft.to(device)
 
-criterion = nn.CrossEntropyLoss()
+criterion = nn.MSELoss()
 
 # Observe that all parameters are being optimized
 optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
@@ -265,19 +289,10 @@ optimizer_ft = optim.SGD(model_ft.parameters(), lr=0.001, momentum=0.9)
 # Decay LR by a factor of 0.1 every 7 epochs
 exp_lr_scheduler = lr_scheduler.StepLR(optimizer_ft, step_size=7, gamma=0.1)
 
-# %% [markdown]
-# Train and evaluate
-# ^^^^^^^^^^^^^^^^^^
-# 
-# It should take around 15-25 min on CPU. On GPU though, it takes less than a
-# minute.
-# 
-# 
-# 
 
 # %%
 model_ft = train_model(model_ft, criterion, optimizer_ft, exp_lr_scheduler,
-                       num_epochs=25)
+                       num_epochs=50)
 
 
 # %%
@@ -308,7 +323,7 @@ model_conv.fc = nn.Linear(num_ftrs, 1)
 
 model_conv = model_conv.to(device)
 
-criterion = nn.CrossEntropyLoss()
+criterion = nn.MSELoss()
 
 # Observe that only parameters of final layer are being optimized as
 # opposed to before.
@@ -330,7 +345,7 @@ exp_lr_scheduler = lr_scheduler.StepLR(optimizer_conv, step_size=7, gamma=0.1)
 
 # %%
 model_conv = train_model(model_conv, criterion, optimizer_conv,
-                         exp_lr_scheduler, num_epochs=25)
+                         exp_lr_scheduler, num_epochs=50)
 
 
 # %%
@@ -349,3 +364,4 @@ plt.show()
 # 
 # 
 # 
+
