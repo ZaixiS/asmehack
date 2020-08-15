@@ -7,3 +7,4 @@
 *.jpeg
 ./data/*
 ./Hackathon_3dBuild/*
+./.vscode/*
