@@ -1,10 +1,14 @@
-*.csv
-*.png
-*.jpg
+.vscode/
+# Hackathon_3dBuild/
+problem2/
+
 *.bmp
-*.zip
-*.ipynb
+*.jpg
 *.jpeg
-./Hackathon_3dBuild/*
-./problem2/*
-./.vscode/*
+*.png
+
+*.csv
+*.txt
+*.ipynb
+*.pdf
+*.zip
