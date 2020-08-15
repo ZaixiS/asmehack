@@ -4,5 +4,6 @@
 *.bmp
 *.zip
 *.ipynb
+*.jpeg
 ./data/*
 ./Hackathon_3dBuild/*
