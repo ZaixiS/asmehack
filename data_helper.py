@@ -79,7 +79,7 @@ for temp in locations:
             original_power=(power[x,y]-power_min)/(power_max-power_min)
             power_crop[x+int(crop_x*0.5)-center_x,y+int(crop_y*0.5)-center_y]=int(original_power*255)
             # speed crop
-            original_speed=(speed[x,y]-power_min)/(speed_max-speed_min)
+            original_speed=(speed[x,y]-speed_min)/(speed_max-speed_min)
             speed_crop[x+int(crop_x*0.5)-center_x,y+int(crop_y*0.5)-center_y]=int(original_speed*255)
             # temporal crop
             elapsed_time=temporal[center_x,center_y]-temporal[x,y]
@@ -87,7 +87,7 @@ for temp in locations:
                 temporal_value=int(np.exp(-elapsed_time*cooling_alpha)*255)
             else:
                 temporal_value=max(255-int(np.log(elapsed_time+1)*clock_alpha),0)
-                temporal_crop[x+int(crop_x*0.5)-center_x,y+int(crop_y*0.5)-center_y]=temporal_value
+            temporal_crop[x+int(crop_x*0.5)-center_x,y+int(crop_y*0.5)-center_y]=temporal_value
     rgb_image=np.stack((power_crop.astype(np.uint8),speed_crop.astype(np.uint8),temporal_crop.astype(np.uint8)),axis=-1)
     if random.random()<0.8:
         # train
