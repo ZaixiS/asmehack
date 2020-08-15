@@ -1,0 +1,199 @@
+<amMaterialDB xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:/C:/mdcs/ammd/1.5/installer-pkg/data/schema/am_schema_R2018a.xsd">
+    <virginPowder>
+        <generalInfo>
+            <materialStockID>NIST-Delta-IN625-Stock 2012</materialStockID>
+            <materialStockName>NIST Delta NickelAlloy IN625 Powder </materialStockName>
+            <materialDescription>Delta 9011-0022</materialDescription>
+            <materialStockOwner>NIST</materialStockOwner>
+            <materialQuantity>
+                <unit>kg</unit>
+                <value>
+                    <average>80</average>
+                </value>
+            </materialQuantity>
+            <materialStockLocation>Distributed to the participants, each with
+                10kg</materialStockLocation>
+            <materialProperties>
+                <powder>
+                    <powderComposition>
+                        <constituent>
+                            <element>Carbon</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <max>0.01</max>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Manganese</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>0.04</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Sulfur</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>0.004</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Chromium</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>20.11</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Molybdenum</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>8.79</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Aluminum</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>0.34</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Cobalt</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>0.20</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Fe</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>0.74</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Titanium</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>0.35</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Silicon</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>0.15</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Phosphorus</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <max>0.01</max>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Nb</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>4.03</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                        <constituent>
+                            <element>Ta</element>
+                            <quantity>
+                                <unit>weight %</unit>
+                                <value>
+                                    <average>0.01</average>
+                                </value>
+                            </quantity>
+                        </constituent>
+                    </powderComposition>
+                    <associatedTestID>N/A</associatedTestID>
+                </powder>
+                <powder>
+                    <particleSize>
+                        <dValues>
+                            <measurementMethod>Sieving ASTM B214-07</measurementMethod>
+                            <dValueItem>
+                                <name>D90</name>
+                                <unit>micrometer</unit>
+                                <value>
+                                    <average>49.95</average>
+                                    <std>1.08</std>
+                                </value>
+                            </dValueItem>
+                            <dValueItem>
+                                <name>D50</name>
+                                <unit>micrometer</unit>
+                                <value>
+                                    <average>34.32</average>
+                                    <std>1.74</std>
+                                </value>
+                            </dValueItem>
+                            <dValueItem>
+                                <name>D10</name>
+                                <unit>micrometer</unit>
+                                <value>
+                                    <average>18.46</average>
+                                    <std>3.77</std>
+                                </value>
+                            </dValueItem>
+                            <dValueItem>
+                                <name>D98</name>
+                                <description>provided by supplier</description>
+                                <unit>micrometer</unit>
+                                <value>
+                                    <average>53</average>
+                                </value>
+                            </dValueItem>
+                        </dValues>
+                    </particleSize>
+                    <associatedTestID>N/A</associatedTestID>
+                </powder>
+            </materialProperties>
+        </generalInfo>
+        <materialDefinition>
+            <productDefinition>
+                <productName>Delta NickelAlloy IN625</productName>
+                <vendor>
+                    <vendorNameEnum>Delta</vendorNameEnum>
+                </vendor>
+                <productID>9011-0022</productID>
+            </productDefinition>
+            <materialType>
+                <materialEnum>NickelAlloy</materialEnum>
+            </materialType>
+            <materialName>
+                <materialNameEnum>IN625</materialNameEnum>
+            </materialName>
+        </materialDefinition>
+        <manufacturingLot>M111201</manufacturingLot>
+        <purchaseDate>2013-04-17</purchaseDate>
+    </virginPowder>
+</amMaterialDB>
