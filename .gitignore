@@ -5,6 +5,6 @@
 *.zip
 *.ipynb
 *.jpeg
-./data/*
 ./Hackathon_3dBuild/*
+./problem2/*
 ./.vscode/*
