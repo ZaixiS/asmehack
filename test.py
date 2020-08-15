@@ -1,25 +1,4 @@
 
-# 
-# Transfer Learning for Computer Vision Tutorial
-# ==============================================
-# **Author**: `Sasank Chilamkurthy <https://chsasank.github.io>`_
-# 
-# In this tutorial, you will learn how to train a convolutional neural network for
-# image classification using transfer learning. You can read more about the transfer
-# learning at `cs231n notes <https://cs231n.github.io/transfer-learning/>`__
-# 
-# Quoting these notes,
-# 
-#     In practice, very few people train an entire Convolutional Network
-#     from scratch (with random initialization), because it is relatively
-#     rare to have a dataset of sufficient size. Instead, it is common to
-#     pretrain a ConvNet on a very large dataset (e.g. ImageNet, which
-#     contains 1.2 million images with 1000 categories), and then use the
-#     ConvNet either as an initialization or a fixed feature extractor for
-#     the task of interest.
-# 
-# These two major transfer learning scenarios look as follows:
-# 
 # -  **Finetuning the convnet**: Instead of random initializaion, we
 #    initialize the network with a pretrained network, like the one that is
 #    trained on imagenet 1000 dataset. Rest of the training looks as
@@ -49,7 +28,7 @@ import matplotlib.pyplot as plt
 import time
 import os
 import copy
-
+from matplotlib.pyplot import imshow
 plt.ion()   # interactive mode
 
 # %% [markdown]
@@ -104,6 +83,11 @@ dataset_sizes = {x: len(image_datasets[x]) for x in ['train', 'val']}
 class_names = image_datasets['train'].classes
 
 device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
+
+
+# %%
+for i,j in dataloaders['train']:
+    print(i.shape)
 
 # %% [markdown]
 # Visualize a few images

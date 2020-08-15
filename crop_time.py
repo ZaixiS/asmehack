@@ -6,7 +6,7 @@ import os
 target_name='CMD_Layer0013'
 if not os.path.exists('./%s'%(target_name)): os.mkdir('./%s'%(target_name))
 # resize factor [0,1]
-resize=1.0
+resize=0.3
 
 df=pd.read_csv('./Hackathon_3dBuild/BuildCommand/%s.csv'%(target_name),header=None)
 left=df[0].min()
@@ -63,7 +63,7 @@ for temp in locations:
             speed_crop[x+int(crop_x*0.5)-center_x,y+int(crop_y*0.5)-center_y]=int(original_speed*255)
             # temporal crop
             temporal_crop[x+int(crop_x*0.5)-center_x,y+int(crop_y*0.5)-center_y]=max(255+int(elapsed_time*255*clock_scale),0)
-    io.imsave('./%s/%d.jpg'%(target_name,photo_id),
+    io.imsave('./%s/%d.png'%(target_name,photo_id),
               np.stack((power_crop.astype(np.uint8),
                         speed_crop.astype(np.uint8),
                         temporal_crop.astype(np.uint8)),
