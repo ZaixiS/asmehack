@@ -10,7 +10,7 @@ problem2/
 *.png
 *.csv
 *.txt
-*.ipynb
+
 *.pdf
 *.zip
 input/
