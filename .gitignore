@@ -2,14 +2,13 @@
 Hackathon_3dBuild/
 problem2/
 input/
-!layers/
 
 *.bmp
 *.jpg
 *.jpeg
 *.png
 
-*.csv
+# *.csv
 *.txt
 
 *.pdf
