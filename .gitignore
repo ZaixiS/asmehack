@@ -8,7 +8,7 @@ input/
 *.jpeg
 *.png
 
-# *.csv
+*.csv
 *.txt
 
 *.pdf
